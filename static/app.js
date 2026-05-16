@@ -49,7 +49,26 @@
     let currentView = 'input';
 
     // ─── Camera ─────────────────────────────────────
+    // Detect if we're in a secure context (HTTPS or localhost)
+    const isSecureContext = window.isSecureContext ||
+        location.hostname === 'localhost' ||
+        location.hostname === '127.0.0.1';
+
     async function startCamera() {
+        // Check if getUserMedia is available
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            if (!isSecureContext) {
+                showError('🔒 相机需要 HTTPS 访问。请通过 https:// 访问此页面，或使用"选择图片"功能。');
+            } else {
+                showError('您的浏览器不支持相机访问，请使用"选择图片"功能。');
+            }
+            // Disable camera button, keep upload working
+            captureBtn.disabled = true;
+            captureBtn.style.opacity = '0.5';
+            captureBtn.title = '请在 HTTPS 下使用相机';
+            return;
+        }
+
         try {
             // Use a more conservative resolution for mobile
             stream = await navigator.mediaDevices.getUserMedia({
@@ -62,8 +81,16 @@
             });
             video.srcObject = stream;
             await video.play();
+            captureBtn.disabled = false;
+            captureBtn.style.opacity = '1';
         } catch (err) {
-            showError('无法打开相机: ' + err.message + '。请使用"选择图片"功能。');
+            if (err.name === 'NotAllowedError') {
+                showError('相机权限被拒绝，请在浏览器设置中允许相机访问，或使用"选择图片"功能。');
+            } else if (err.name === 'NotFoundError') {
+                showError('未检测到摄像头，请使用"选择图片"功能。');
+            } else {
+                showError('无法打开相机: ' + err.message + '。请使用"选择图片"功能。');
+            }
         }
     }
 

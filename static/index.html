@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#2563eb">
+<title>手写文字识别</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="app">
+    <!-- Header -->
+    <header>
+        <h1>📝 手写识别</h1>
+        <button id="toggleViewBtn" class="icon-btn" title="切换视图">☰</button>
+    </header>
+
+    <!-- Camera / Upload Panel -->
+    <div id="inputPanel" class="panel">
+        <div id="cameraView">
+            <video id="video" autoplay playsinline></video>
+            <div id="cameraOverlay">
+                <div class="scan-frame"></div>
+                <p class="hint">将手写内容置于框内</p>
+            </div>
+        </div>
+        <canvas id="canvas" style="display:none"></canvas>
+        <div id="previewArea" style="display:none">
+            <img id="preview" alt="拍摄预览">
+        </div>
+        <div class="btn-group">
+            <button id="captureBtn" class="btn primary">
+                <span class="icon">📷</span> 拍照识别
+            </button>
+            <button id="uploadBtn" class="btn secondary">
+                <span class="icon">🖼</span> 选择图片
+            </button>
+            <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp" style="display:none">
+            <button id="retakeBtn" class="btn outline" style="display:none">
+                🔄 重拍
+            </button>
+            <button id="confirmBtn" class="btn primary" style="display:none">
+                ✨ 开始识别
+            </button>
+        </div>
+        <div id="loading" style="display:none">
+            <div class="spinner"></div>
+            <p>识别中，请稍候...</p>
+        </div>
+    </div>
+
+    <!-- Result Panel -->
+    <div id="resultPanel" class="panel" style="display:none">
+        <div class="result-header">
+            <h2>识别结果</h2>
+            <span id="confidenceBadge" class="badge"></span>
+        </div>
+        <div class="result-tabs">
+            <button class="tab active" data-tab="formatted">格式化</button>
+            <button class="tab" data-tab="raw">原文</button>
+            <button class="tab" data-tab="image">原图</button>
+        </div>
+        <div id="tabFormatted" class="tab-content active">
+            <div id="formattedText" class="formatted-result"></div>
+        </div>
+        <div id="tabRaw" class="tab-content">
+            <pre id="rawText" class="raw-result"></pre>
+        </div>
+        <div id="tabImage" class="tab-content">
+            <img id="resultImage" class="result-img">
+        </div>
+        <div class="btn-group">
+            <button id="saveBtn" class="btn primary">💾 保存</button>
+            <button id="copyBtn" class="btn secondary">📋 复制</button>
+            <button id="newBtn" class="btn outline">🆕 继续识别</button>
+        </div>
+    </div>
+
+    <!-- Notes List -->
+    <div id="listPanel" class="panel" style="display:none">
+        <div class="list-header">
+            <h2>历史记录</h2>
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="搜索笔记...">
+            </div>
+        </div>
+        <div id="notesList" class="notes-list">
+            <div class="empty-state">暂无记录</div>
+        </div>
+    </div>
+</div>
+
+<!-- Detail Modal -->
+<div id="detailModal" class="modal" style="display:none">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="modalTitle"></h3>
+            <button class="close-btn" id="closeModal">&times;</button>
+        </div>
+        <div id="modalBody"></div>
+        <div class="modal-footer">
+            <button id="modalEditBtn" class="btn secondary">✏️ 编辑</button>
+            <button id="modalDeleteBtn" class="btn danger">🗑 删除</button>
+        </div>
+    </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
